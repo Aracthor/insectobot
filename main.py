@@ -93,7 +93,11 @@ async def on_message(message):
             await print_usage(message.channel, "Invalid args count.")
             return
 
-        if arg == "born":
+        if arg == "-h" or arg == "--help":
+            await print_usage(message.channel, None)
+            return
+
+        elif arg == "born":
             answer = "You have drawn:\n"
             colors = draw_colors(7)
             characteristics = [
