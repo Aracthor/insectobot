@@ -3,6 +3,10 @@ import random
 
 from enum import Enum, auto
 
+from localization import localization_dictionnary, Language
+
+localization = localization_dictionnary()
+
 class Color(Enum):
     Black = auto()
     White = auto()
@@ -17,7 +21,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 async def print_usage(channel, message):
-    usage = "Usage: `!draw [count]` or `!draw born`"
+    usage = localization.get("usage")
     if message:
         usage = f"{message}\n{usage}"
     await channel.send(usage)
@@ -61,20 +65,20 @@ def color_to_emoji(color):
 
 def color_to_success_rate(color):
     return str({
-        Color.Black: "critical failure",
-        Color.White: "failure",
-        Color.Blue:  "success",
-        Color.Green: "improved success",
-        Color.Red:   "critical success",
+        Color.Black: localization.get("critical_failure"),
+        Color.White: localization.get("failure"),
+        Color.Blue:  localization.get("success"),
+        Color.Green: localization.get("improved_success"),
+        Color.Red:   localization.get("critical_success"),
     }.get(color))
 
 def color_to_characteristic_change(color):
     return str({
-        Color.Black: "capacity",
-        Color.White: "+1 skill point",
-        Color.Blue:  "+2 skill point",
-        Color.Green: "+1 skill point and +1 free skill point (for any skill)",
-        Color.Red:   "characteristic improved by 1",
+        Color.Black: localization.get("capacity"),
+        Color.White: localization.get("1_more_skill_point"),
+        Color.Blue:  localization.get("2_more_skill_point"),
+        Color.Green: localization.get("1_more_skill_point_and_1_more_free_skill_point"),
+        Color.Red:   localization.get("characteristic_improved"),
     }.get(color))
 
 
@@ -87,10 +91,28 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    if message.content.startswith("!language"):
+        arg = read_arg(message.content, message.channel)
+        if not arg:
+            return
+
+        language = arg.lower()
+        languages = {
+            "french": Language.French,
+            "français": Language.French,
+            "english": Language.English,
+            "anglais": Language.English,
+        }
+        if not language in languages:
+            await message.channel.send(localization.get("invalid_language"))
+            return
+        localization.set_language(languages.get(language))
+        await message.channel.send(localization.get("language_set"))
+
     if message.content.startswith("!draw"):
         arg = read_arg(message.content, message.channel)
         if arg is None:
-            await print_usage(message.channel, "Invalid args count.")
+            await print_usage(message.channel, localization.get("invalid_arg_count"))
             return
 
         if arg == "-h" or arg == "--help":
@@ -98,16 +120,16 @@ async def on_message(message):
             return
 
         elif arg == "born":
-            answer = "You have drawn:\n"
+            answer = localization.get("you_have_drawn")
             colors = draw_colors(7)
             characteristics = [
-                "Wing",
-                "Antenna",
-                "Caste",
-                "Chitin",
-                "Spirit",
-                "Mandible",
-                "Temperature",
+                localization.get("wing"),
+                localization.get("antenna"),
+                localization.get("caste"),
+                localization.get("chitin"),
+                localization.get("spirit"),
+                localization.get("mandible"),
+                localization.get("temperature"),
             ]
             for i in range(0, 7):
                 answer += " • {0} : {1} ({2})\n".format(characteristics[i], color_to_emoji(colors[i]), color_to_characteristic_change(colors[i]))
@@ -116,17 +138,17 @@ async def on_message(message):
         elif arg.isnumeric():
             count = int(arg)
             if count < 1 or count > 42:
-                await print_usage(message.channel, "Invalid argument: count must be between 1 and 42.")
+                await print_usage(message.channel, localization.get("invalid_count_number"))
                 return
 
             colors = draw_colors(count)
-            answer = "You have drawn:\n"
+            answer = localization.get("you_have_drawn")
             for color in colors:
                 answer += " • a {0} ({1})\n".format(color_to_emoji(color), color_to_success_rate(color))
             await message.channel.send(answer)
 
         else:
-            await print_usage(channel, "Invalid argument.")
+            await print_usage(message.channel, localization.get("invalid_argument"))
             return
 
 client.run("MTAzMDU4MDg4OTA5NDIxMzY4Mg.GAo39R.axAkfXOfv5WZTq7xdShGqjA7nbQKUPjy8VImi0")
