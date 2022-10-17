@@ -1,6 +1,8 @@
 import discord
 import random
 
+from env import BOT_TOKEN, GUILD_ID
+
 from enum import Enum, auto
 
 from localization import localization_dictionnary, Language
@@ -71,7 +73,7 @@ def color_to_characteristic_change(color):
     }.get(color))
 
 
-@tree.command(name = "language", description = "Change language", guild=discord.Object(id=1030582583970504765))
+@tree.command(name = "language", description = "Change language", guild=discord.Object(id=GUILD_ID))
 async def command_language(interaction: discord.Interaction, language: str):
     language = language.lower()
     languages = {
@@ -86,7 +88,7 @@ async def command_language(interaction: discord.Interaction, language: str):
     localization.set_language(languages.get(language))
     await interaction.response.send_message(localization.get("language_set"))
 
-@tree.command(name = "born", description = "draw 7 beetles for character creation.", guild=discord.Object(id=1030582583970504765))
+@tree.command(name = "born", description = "draw 7 beetles for character creation.", guild=discord.Object(id=GUILD_ID))
 async def command_born(interaction: discord.Interaction):
     answer = localization.get("you_have_drawn")
     colors = draw_colors(7)
@@ -103,7 +105,7 @@ async def command_born(interaction: discord.Interaction):
         answer += " • {0} : {1} ({2})\n".format(characteristics[i], color_to_emoji(colors[i]), color_to_characteristic_change(colors[i]))
     await interaction.response.send_message(answer)
 
-@tree.command(name = "draw", description = "draw N beetles for any game test.", guild=discord.Object(id=1030582583970504765))
+@tree.command(name = "draw", description = "draw N beetles for any game test.", guild=discord.Object(id=GUILD_ID))
 async def command_draw(interaction: discord.Interaction, count: int):
     if count < 1 or count > 42:
         await interaction.response.send_message(localization.get("invalid_count_number"))
@@ -118,8 +120,8 @@ async def command_draw(interaction: discord.Interaction, count: int):
 
 @client.event
 async def on_ready():
-    await tree.sync(guild=discord.Object(id=1030582583970504765))
+    await tree.sync(guild=discord.Object(id=GUILD_ID))
     print("We have logged in as {0.user}".format(client))
 
 
-client.run("MTAzMTMyMjc0ODU3MzcyODc3OA.GyR0jf.JzcD9Nl36Av-zn9kACZdBYVl6m0UqT73gL0IAU")
+client.run(BOT_TOKEN)
