@@ -112,7 +112,7 @@ async def command_draw(interaction: discord.Interaction, count: int):
     colors = draw_colors(count)
     answer = localization.get("you_have_drawn")
     for color in colors:
-        answer += " • a {0} ({1})\n".format(color_to_emoji(color), color_to_success_rate(color))
+        answer += " • {0} ({1})\n".format(color_to_emoji(color), color_to_success_rate(color))
     await interaction.response.send_message(answer)
 
 
