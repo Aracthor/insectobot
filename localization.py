@@ -27,9 +27,8 @@ LOCALIZATION = {
 
     "invalid_arg_count": ["Invalid argument count.", "Nombre d'arguments invalide."],
     "invalid_argument": ["Invalid argument.", "Argument invalide."],
-    "invalid_count_number": ["Invalid argument: count must be between 1 and 42.", "Argument invalide: nombre doit être entre 1 et 42."],
+    "invalid_count_number": ["Invalid argument: count must be between 1 and 42.", "Argument invalide: count doit être entre 1 et 42."],
     "invalid_language": ["Invalid language.", "Langue invalide."],
-    "usage": ["Usage: `!draw [count]` or `!draw born`", "Usage: `!draw [nombre]` ou `!draw born`"],
 
     "language_set": ["Language set to english.", "Langue configurée en français."],
 
