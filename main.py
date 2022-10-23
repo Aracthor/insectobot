@@ -25,13 +25,15 @@ tree = discord.app_commands.CommandTree(client)
 
 def draw_colors(count):
     numbers = []
+    for i in range(42):
+        numbers.append(i)
+    results = []
     for i in range(count):
-        number = random.randrange(0, 42)
-        while number in numbers:
-            number = random.randrange(0, 42)
-        numbers.append(number)
+        index = random.randrange(0, len(numbers))
+        results.append(numbers[index])
+        numbers.pop(index)
     colors = []
-    for number in numbers:
+    for number in results:
         if number < 3:
             colors.append(Color.Black)
         elif number >= 3 and number < 21:
