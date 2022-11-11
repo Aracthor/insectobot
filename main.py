@@ -8,20 +8,12 @@ from enum import Enum, auto
 from localization import localization_dictionnary, Language
 
 
-localization = localization_dictionnary()
-
 class Color(Enum):
     Black = auto()
     White = auto()
     Blue = auto()
     Green = auto()
     Red = auto()
-
-
-intents = discord.Intents.default()
-
-client = discord.Client(intents=intents)
-tree = discord.app_commands.CommandTree(client)
 
 def draw_colors(count):
     numbers = []
@@ -55,7 +47,7 @@ def color_to_emoji(color):
         Color.Red:   ":red_circle:",
     }.get(color))
 
-def color_to_success_rate(color):
+def color_to_success_rate(color, localization):
     return str({
         Color.Black: localization.get("critical_failure"),
         Color.White: localization.get("failure"),
@@ -64,7 +56,7 @@ def color_to_success_rate(color):
         Color.Red:   localization.get("critical_success"),
     }.get(color))
 
-def color_to_characteristic_change(color):
+def color_to_characteristic_change(color, localization):
     return str({
         Color.Black: localization.get("capacity"),
         Color.White: localization.get("1_more_skill_point"),
@@ -74,55 +66,66 @@ def color_to_characteristic_change(color):
     }.get(color))
 
 
-@tree.command(name = "language", description = "Change language", guild=discord.Object(id=GUILD_ID))
-async def command_language(interaction: discord.Interaction, language: str):
-    language = language.lower()
-    languages = {
-        "french": Language.French,
-        "français": Language.French,
-        "english": Language.English,
-        "anglais": Language.English,
-    }
-    if not language in languages:
-        await interaction.response.send_message(localization.get("invalid_language"))
-        return
-    localization.set_language(languages.get(language))
-    await interaction.response.send_message(localization.get("language_set"))
 
-@tree.command(name = "born", description = "draw 7 beetles for character creation.", guild=discord.Object(id=GUILD_ID))
-async def command_born(interaction: discord.Interaction):
-    answer = localization.get("you_have_drawn")
-    colors = draw_colors(7)
-    characteristics = [
-        localization.get("wing"),
-        localization.get("antenna"),
-        localization.get("caste"),
-        localization.get("chitin"),
-        localization.get("spirit"),
-        localization.get("mandible"),
-        localization.get("temperature"),
-    ]
-    for i in range(0, 7):
-        answer += " • {0} : {1} ({2})\n".format(characteristics[i], color_to_emoji(colors[i]), color_to_characteristic_change(colors[i]))
-    await interaction.response.send_message(answer)
+intents = discord.Intents.default()
 
-@tree.command(name = "draw", description = "draw N beetles for any game test.", guild=discord.Object(id=GUILD_ID))
-async def command_draw(interaction: discord.Interaction, count: int):
-    if count < 1 or count > 42:
-        await interaction.response.send_message(localization.get("invalid_count_number"))
-        return
+class Insectobot(discord.Client):
 
-    colors = draw_colors(count)
-    answer = localization.get("you_have_drawn")
-    for color in colors:
-        answer += " • {0} ({1})\n".format(color_to_emoji(color), color_to_success_rate(color))
-    await interaction.response.send_message(answer)
+    def __init__(self):
+        super().__init__(intents=intents)
+        self.localization = localization_dictionnary()
+        self.tree = discord.app_commands.CommandTree(self)
 
 
-@client.event
-async def on_ready():
-    await tree.sync(guild=discord.Object(id=GUILD_ID))
-    print("We have logged in as {0.user}".format(client))
+        @self.tree.command(name = "language", description = "Change language", guild=discord.Object(id=GUILD_ID))
+        async def command_language(interaction: discord.Interaction, language: str):
+            language = language.lower()
+            languages = {
+                "french": Language.French,
+                "français": Language.French,
+                "english": Language.English,
+                "anglais": Language.English,
+            }
+            if not language in languages:
+                await interaction.response.send_message(self.localization.get("invalid_language"))
+                return
+            self.localization.set_language(languages.get(language))
+            await interaction.response.send_message(self.localization.get("language_set"))
+
+        @self.tree.command(name = "born", description = "draw 7 beetles for character creation.", guild=discord.Object(id=GUILD_ID))
+        async def command_born(interaction: discord.Interaction):
+            answer = self.localization.get("you_have_drawn")
+            colors = draw_colors(7)
+            characteristics = [
+                self.localization.get("wing"),
+                self.localization.get("antenna"),
+                self.localization.get("caste"),
+                self.localization.get("chitin"),
+                self.localization.get("spirit"),
+                self.localization.get("mandible"),
+                self.localization.get("temperature"),
+            ]
+            for i in range(0, 7):
+                answer += " • {0} : {1} ({2})\n".format(characteristics[i], color_to_emoji(colors[i]), color_to_characteristic_change(colors[i], self.localization))
+            await interaction.response.send_message(answer)
+
+        @self.tree.command(name = "draw", description = "draw N beetles for any game test.", guild=discord.Object(id=GUILD_ID))
+        async def command_draw(interaction: discord.Interaction, count: int):
+            if count < 1 or count > 42:
+                await interaction.response.send_message(self.localization.get("invalid_count_number"))
+                return
+            colors = draw_colors(count)
+            answer = self.localization.get("you_have_drawn")
+            for color in colors:
+                answer += " • {0} ({1})\n".format(color_to_emoji(color), color_to_success_rate(color, self.localization))
+            await interaction.response.send_message(answer)
 
 
+        @self.event
+        async def on_ready():
+            await self.tree.sync(guild=discord.Object(id=GUILD_ID))
+            print("We have logged in as {0.user}".format(client))
+
+
+client = Insectobot()
 client.run(BOT_TOKEN)
