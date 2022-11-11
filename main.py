@@ -117,33 +117,22 @@ class Insectobot(discord.Client):
             await interaction.response.send_message(answer)
 
         @self.tree.command(name = "draw", description = "draw N beetles for any game test.", guild=discord.Object(id=GUILD_ID))
-        async def command_draw(interaction: discord.Interaction, count: int):
+        async def command_draw(interaction: discord.Interaction, count: int, bonus: int = 0):
             if count < 1 or count > 42:
                 await interaction.response.send_message(self.localization.get("invalid_count_number"))
-                return
-            colors = draw_colors(count)
-            answer = self.localization.get("you_have_drawn")
-            for color in colors:
-                answer += " • {0} ({1})\n".format(color_to_emoji(color), color_to_success_rate(color, self.localization))
-            await interaction.response.send_message(answer)
-
-
-        @self.tree.command(name = "initative_draw", description = "draw initative beetles for a character.", guild=discord.Object(id=GUILD_ID))
-        async def command_initative_draw(interaction: discord.Interaction, activity: int, bonus: int):
-            if activity < 1 or activity > 42:
-                await interaction.response.send_message(self.localization.get("invalid_activity"))
                 return
             if bonus < -2 or bonus > 2:
                 await interaction.response.send_message(self.localization.get("invalid_bonus"))
                 return
-
-            colors = draw_colors(activity)
-            final_colors = []
-            for color in colors:
-                final_colors.append(transform_color(color, bonus))
+            colors = draw_colors(count)
             answer = self.localization.get("you_have_drawn")
-            for i in range(0, len(colors)):
-                answer += " • {0} -> {1}\n".format(color_to_emoji(colors[i]), color_to_emoji(final_colors[i]))
+            if bonus == 0:
+                for color in colors:
+                    answer += " • {0} ({1})\n".format(color_to_emoji(color), color_to_success_rate(color, self.localization))
+            else:
+                for color in colors:
+                    final_color = transform_color(color, bonus)
+                    answer += " • {0} -> {1} ({2})\n".format(color_to_emoji(color), color_to_emoji(final_color), color_to_success_rate(final_color, self.localization))
             await interaction.response.send_message(answer)
 
 
