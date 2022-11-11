@@ -15,6 +15,14 @@ class Color(Enum):
     Green = auto()
     Red = auto()
 
+def transform_color(color, bonus):
+    new_color_value = color.value + bonus
+    if new_color_value < Color.Black.value:
+        new_color_value = Color.Black.value
+    elif new_color_value > Color.Red.value:
+        new_color_value = Color.Red.value
+    return Color(new_color_value)
+
 def draw_colors(count):
     numbers = []
     for i in range(42):
@@ -64,7 +72,6 @@ def color_to_characteristic_change(color, localization):
         Color.Green: localization.get("1_more_skill_point_and_1_more_free_skill_point"),
         Color.Red:   localization.get("characteristic_improved"),
     }.get(color))
-
 
 
 intents = discord.Intents.default()
@@ -118,6 +125,25 @@ class Insectobot(discord.Client):
             answer = self.localization.get("you_have_drawn")
             for color in colors:
                 answer += " • {0} ({1})\n".format(color_to_emoji(color), color_to_success_rate(color, self.localization))
+            await interaction.response.send_message(answer)
+
+
+        @self.tree.command(name = "initative_draw", description = "draw initative beetles for a character.", guild=discord.Object(id=GUILD_ID))
+        async def command_initative_draw(interaction: discord.Interaction, activity: int, bonus: int):
+            if activity < 1 or activity > 42:
+                await interaction.response.send_message(self.localization.get("invalid_activity"))
+                return
+            if bonus < -2 or bonus > 2:
+                await interaction.response.send_message(self.localization.get("invalid_bonus"))
+                return
+
+            colors = draw_colors(activity)
+            final_colors = []
+            for color in colors:
+                final_colors.append(transform_color(color, bonus))
+            answer = self.localization.get("you_have_drawn")
+            for i in range(0, len(colors)):
+                answer += " • {0} -> {1}\n".format(color_to_emoji(colors[i]), color_to_emoji(final_colors[i]))
             await interaction.response.send_message(answer)
 
 

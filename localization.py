@@ -29,6 +29,8 @@ LOCALIZATION = {
     "invalid_argument": ["Invalid argument.", "Argument invalide."],
     "invalid_count_number": ["Invalid argument: count must be between 1 and 42.", "Argument invalide: count doit être entre 1 et 42."],
     "invalid_language": ["Invalid language.", "Langue invalide."],
+    "invalid_activity": ["Invalid argument: activity must be between 1 and 42.", "Argument invalide: activity doit être entre 1 et 42."],
+    "invalid_bonus": ["Invalid argument: bonus must be between -2 and 2.", "Argument invalide: bonus doit être entre -2 et 2."],
 
     "language_set": ["Language set to english.", "Langue configurée en français."],
 
