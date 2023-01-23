@@ -133,7 +133,10 @@ class Insectobot(discord.Client):
                 for color in colors:
                     final_color = transform_color(color, bonus)
                     answer += " • {0} -> {1} ({2})\n".format(color_to_emoji(color), color_to_emoji(final_color), color_to_success_rate(final_color, self.localization))
-            await interaction.response.send_message(answer)
+            if len(answer) >= 2000:
+                await interaction.response.send_message(self.localization.get("too_long_answer"))
+            else:
+                await interaction.response.send_message(answer)
 
 
         @self.event
