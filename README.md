@@ -15,7 +15,7 @@ Replacing `{BOT_TOKEN}` by the bot token and `{GUILD_ID}` by the ID of the serve
 
 Start the but by running in the repository :
 ```
-py -u main.py
+python3 -u main.py
 ```
 
 Then, in your server, the bot should answer the following commands :
