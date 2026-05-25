@@ -34,6 +34,9 @@ LOCALIZATION = {
     "language_set": ["Language set to english.", "Langue configurée en français."],
 
     "you_have_drawn": ["Draw:\n", "Tirage:\n"],
+    "redraw": ["Redraw:\n", "Re-tirage:\n"],
+
+    "result": ["Result", "Résultat"],
 
     "too_long_answer": ["I can't answer that, I'm limited to 2000 characters by answer...", "Je ne peux pas répondre à ça, je suis limité à 2000 caractères par réponse..."],
 }
