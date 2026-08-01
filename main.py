@@ -167,6 +167,7 @@ class Insectobot(discord.Client):
                     answer += self.localization.get("redraw")
                     answer += color_with_bonus_str(bag.draw_colors(1)[0], bonus, self.localization)
             elif difference == 0:
+                bag = BeetleBag()
                 color = bag.draw_colors(1)[0]
                 answer = self.localization.get("you_have_drawn")
                 answer += color_with_bonus_str(color, bonus, self.localization)
